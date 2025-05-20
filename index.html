@@ -229,33 +229,11 @@
 }
 
     @media (max-width: 1100px) {
-
-/*           html, body {
-  margin: 0;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #121315;
-  overflow: hidden;
-}
-      
-  iframe {
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    padding:0;
-    margin:0;
-    overflow: auto;
-    box-sizing:border-box;
-    } */
-      
       .notification {
         width: -webkit-fill-available;
       }
       #ios-install-banner {
-        width: width: -webkit-fill-available;
+        width: -webkit-fill-available;
         margin: 0px 3px;
     }
       #install-banner {
@@ -324,17 +302,10 @@
     <p style="margin: 5px 0; font-size: 14px;">2. Select 'Add to Home Screen' <img src="https://static-00.iconduck.com/assets.00/plus-square-icon-2048x2048-h144q2yx.png" alt="Share icon" style="width: 16px; height: 16px; object-fit: contain; vertical-align: middle;filter: invert(100%);">
     </p>
     <p style="margin: 5px 0; font-size: 14px;">3. Click 'Add'</p>
-    <!-- <div style="display: flex; justify-content: flex-end; margin-top: 0px;">
-        <button id="ios-install-dismiss" style="background: #478fdf;border: none;color: white; padding: 5px 12px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;border-radius: 4px;">Dismiss</button>
-    </div> -->
   </div>
 
   <iframe frameborder="0" scrolling="yes" allowfullscreen="yes"
     src="https://script.google.com/macros/s/AKfycbwuZM7KGKnS7jnpM2YN9W_AgTMqA0qJGw99K3MIUNxzI1tnh3YK76AhgeCfh2Wc7pTd/exec"></iframe>
-
-<!--   <script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-messaging-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore-compat.js"></script> -->
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
@@ -346,10 +317,8 @@
     let db;
 
 async function resetNotifications() {
-    // Get the button element for visual feedback
     const button = document.getElementById('resetBtn');
 
-    // Change appearance when clicked
     button.style.backgroundColor = '#478fdf';
     button.style.color = 'white';
     button.textContent = 'Resetting...';
@@ -357,7 +326,6 @@ async function resetNotifications() {
     if (!checkStorageAvailability()) {
         showSuccessMessage('Storage unavailable. Please check browser settings.');
 
-        // Change button to indicate error
         button.style.backgroundColor = '#ff4d4d';
         button.textContent = 'Reset Failed';
         return;
@@ -365,18 +333,17 @@ async function resetNotifications() {
 
     console.log('Resetting notifications...');
     try {
-        // Unregister all service workers
         const registrations = await navigator.serviceWorker.getRegistrations();
         for (let registration of registrations) {
             await registration.unregister();
             console.log('Service worker unregistered');
         }
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for cleanup
+        await new Promise(resolve => setTimeout(resolve, 1000));
         if (messaging) {
             try {
                 const token = await messaging.getToken().catch(err => {
                     console.log('No current token found:', err);
-                    return null; // Handle case where no token exists
+                    return null;
                 });
                 if (token) {
                     await messaging.deleteToken().catch(err => {
@@ -411,27 +378,22 @@ async function resetNotifications() {
                 console.error('Error processing token:', err);
             }
         }
-        // Clear all notification-related local storage
         localStorage.removeItem('fcmToken');
         localStorage.removeItem('notificationPromptDismissed');
-        localStorage.removeItem('notificationPermissionDenied'); // Clear any permission denial flag
+        localStorage.removeItem('notificationPermissionDenied');
 
-        // Update button to indicate success
-        button.style.backgroundColor = '#478fdf'; // Green color for success
+        button.style.backgroundColor = '#478fdf';
         button.textContent = 'Reset Complete';
 
-        // Check current permission state and act accordingly
         if (Notification.permission === 'denied') {
             showSuccessMessage('Notifications blocked. Enable in browser settings.');
         } else if (Notification.permission === 'granted') {
-            // Even if granted, reset everything and force a new prompt
             showSuccessMessage('Notifications reset. Please reauthorize.');
             setTimeout(() => {
                 console.log('Forcing reauthorization...');
                 forceNotificationRePrompt();
             }, 1500);
         } else {
-            // Default state: prompt should appear after reinitialization
             showSuccessMessage('Notifications reset. You will be prompted again.');
             setTimeout(() => {
                 console.log('Reinitializing Firebase...');
@@ -439,55 +401,47 @@ async function resetNotifications() {
             }, 1500);
         }
 
-        // Make the button fade out after success
         setTimeout(function() {
             button.style.opacity = '0';
-            // Remove from DOM after fade completes
             setTimeout(function() {
                 button.style.display = 'none';
-            }, 300); // Match this to the transition time in CSS
-        }, 2500); // Give user time to see the success state
+            }, 300);
+        }, 2500);
 
     } catch (err) {
         console.error('Reset failed:', err);
         showSuccessMessage('Failed to reset notifications. Try again.');
 
-        // Change button to indicate error
-        button.style.backgroundColor = '#ff4d4d'; // Red color for error
+        button.style.backgroundColor = '#ff4d4d';
         button.textContent = 'Reset Failed';
     }
 }
 
-// Helper function to force a re-prompt
 function forceNotificationRePrompt() {
-    // Reinitialize Firebase and trigger the prompt
     setupFirebaseAndNotifications();
 }
 
-// Ensure storage check is defined
 function checkStorageAvailability() {
     return !!(navigator.storage && window.indexedDB);
 }
 
-        function setupFirebaseAndNotifications() {
-            // Firebase Configuration
-            const firebaseConfig = {
-                apiKey: "AIzaSyB5r_KL2eKVFd66VQU_5pznKrVHa9xzCfc",
-                authDomain: "joespick5push.firebaseapp.com",
-                projectId: "joespick5push",
-                storageBucket: "joespick5push.firebasestorage.app",
-                messagingSenderId: "783669343677",
-                appId: "1:783669343677:web:d3a43a1a58b920ba9a4ed4",
-                measurementId: "G-HNPLN4XZ44"
-            };
+function setupFirebaseAndNotifications() {
+    const firebaseConfig = {
+        apiKey: "AIzaSyB5r_KL2eKVFd66VQU_5pznKrVHa9xzCfc",
+        authDomain: "joespick5push.firebaseapp.com",
+        projectId: "joespick5push",
+        storageBucket: "joespick5push.firebasestorage.app",
+        messagingSenderId: "783669343677",
+        appId: "1:783669343677:web:d3a43a1a58b920ba9a4ed4",
+        measurementId: "G-HNPLN4XZ44"
+    };
 
-            // Initialize Firebase (with check to prevent duplicate initialization)
-            if (!firebase.apps || !firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
+    if (!firebase.apps || !firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
 
-            messaging = firebase.messaging();
-            db = firebase.firestore();
+    messaging = firebase.messaging();
+    db = firebase.firestore();
 
 if ('serviceWorker' in navigator) {
     const swPath = '/firebase-messaging-sw.js';
@@ -507,100 +461,93 @@ if ('serviceWorker' in navigator) {
     console.log('Service workers not supported');
 }
 
+    function initializeNotifications(registration) {
+        navigator.serviceWorker.addEventListener('message', event => {
+            if (event.data && event.data.type === 'tokenRefresh') {
+                console.log('Token refresh detected');
+                refreshToken();
+            }
+        });
 
-            // Initialize notifications after service worker is registered
-            function initializeNotifications(registration) {
-                // Set up token refresh listener
-                navigator.serviceWorker.addEventListener('message', event => {
-                    if (event.data && event.data.type === 'tokenRefresh') {
-                        console.log('Token refresh detected');
-                        refreshToken();
-                    }
-                });
-
-                // Function to request permission and get token
-                function requestPermission() {
-                    return new Promise((resolve, reject) => {
-                        Notification.requestPermission()
-                            .then(permission => {
-                                if (permission === 'granted') {
-                                    console.log('Notification permission granted.');
-                                    messaging.getToken({
-                                        vapidKey: 'BOM3KFfemC5lGnsF28N-_UGA7H9esoOm5gp0_Eg45HMqaMqviLx_bcAonVaZe-c0GwSFwfwe7-fJVP1n8h1iAAU',
-                                        serviceWorkerRegistration: registration
-                                    })
-                                    .then(token => {
-                                        console.log('Device token:', token);
-                                        saveTokenToFirestore(token);
-                                        resolve(token);
-                                    })
-                                    .catch(error => {
-                                        console.error('Error getting token:', error);
-                                        reject(error);
-                                    });
-                                } else {
-                                    console.log('Notification permission denied.');
-                                    localStorage.setItem('notificationPermissionDenied', 'true');
-                                    reject(new Error('Permission denied'));
-                                }
+        function requestPermission() {
+            return new Promise((resolve, reject) => {
+                Notification.requestPermission()
+                    .then(permission => {
+                        if (permission === 'granted') {
+                            console.log('Notification permission granted.');
+                            messaging.getToken({
+                                vapidKey: 'BOM3KFfemC5lGnsF28N-_UGA7H9esoOm5gp0_Eg45HMqaMqviLx_bcAonVaZe-c0GwSFwfwe7-fJVP1n8h1iAAU',
+                                serviceWorkerRegistration: registration
+                            })
+                            .then(token => {
+                                console.log('Device token:', token);
+                                saveTokenToFirestore(token);
+                                resolve(token);
                             })
                             .catch(error => {
-                                console.error('Error requesting permission:', error);
+                                console.error('Error getting token:', error);
                                 reject(error);
                             });
+                        } else {
+                            console.log('Notification permission denied.');
+                            localStorage.setItem('notificationPermissionDenied', 'true');
+                            reject(new Error('Permission denied'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error requesting permission:', error);
+                        reject(error);
                     });
-                }
+            });
+        }
 
-                // Function to refresh token
-                function refreshToken() {
-                    messaging.getToken({
-                        vapidKey: 'BOM3KFfemC5lGnsF28N-_UGA7H9esoOm5gp0_Eg45HMqaMqviLx_bcAonVaZe-c0GwSFwfwe7-fJVP1n8h1iAAU',
-                        serviceWorkerRegistration: registration
-                    }).then(refreshedToken => {
-                        console.log('Token refreshed:', refreshedToken);
-                        saveTokenToFirestore(refreshedToken);
-                    }).catch(err => {
-                        console.error('Unable to refresh token:', err);
-                    });
-                }
+        function refreshToken() {
+            messaging.getToken({
+                vapidKey: 'BOM3KFfemC5lGnsF28N-_UGA7H9esoOm5gp0_Eg45HMqaMqviLx_bcAonVaZe-c0GwSFwfwe7-fJVP1n8h1iAAU',
+                serviceWorkerRegistration: registration
+            }).then(refreshedToken => {
+                console.log('Token refreshed:', refreshedToken);
+                saveTokenToFirestore(refreshedToken);
+            }).catch(err => {
+                console.error('Unable to refresh token:', err);
+            });
+        }
 
-                // Show notification prompt
-                function createNotificationPrompt() {
-                    // Check if a prompt is already showing
-                    if (document.getElementById('notification-prompt')) {
-                        return;
-                    }
+        function createNotificationPrompt() {
+            if (document.getElementById('notification-prompt')) {
+                return;
+            }
 
-                    const promptDiv = document.createElement('div');
-                    promptDiv.id = 'notification-prompt';
-                    promptDiv.style.cssText = `
-                        position: fixed;
-                        bottom: 50%;
-                        left: 50%;
-                        transform: translate(-50%, 50%);
-                        background: rgba(0, 0, 0, 0.85);
-                        color: white;
-                        padding: 8px 8px;
-                        border-radius: 10px;
-                        box-shadow: rgba(0, 0, 0, 0.9) 0px 10px 13px;
-                        text-align: center;
-                        z-index: 1001;
-                        font-family: Arial, sans-serif;
-                        max-width: 90%;
-                        width: max-content;
-                        border: 2px solid rgb(71, 143, 223);
-                        animation: fade-in 0.3s ease-in-out;
-                    `;
+            const promptDiv = document.createElement('div');
+            promptDiv.id = 'notification-prompt';
+            promptDiv.style.cssText = `
+                position: fixed;
+                bottom: 50%;
+                left: 50%;
+                transform: translate(-50%, 50%);
+                background: rgba(0, 0, 0, 0.85);
+                color: white;
+                padding: 8px 8px;
+                border-radius: 10px;
+                box-shadow: rgba(0, 0, 0, 0.9) 0px 10px 13px;
+                text-align: center;
+                z-index: 1001;
+                font-family: Arial, sans-serif;
+                max-width: 90%;
+                width: max-content;
+                border: 2px solid rgb(71, 143, 223);
+                animation: fade-in 0.3s ease-in-out;
+            `;
 
-                    promptDiv.innerHTML = `
-                        <p class="notification">You'll receive notifications when Picks and Entry Form are available</p>
-                        <div style="display: flex; justify-content: space-between; gap: 10px;width: 104px;margin: 0 auto;">
-                            <button id="enable-notifications" style="background-color: #478fdf; color: white; border: none; padding: 10px 18px; border-radius: 4px; font-weight: bold; cursor: pointer; flex: 1;width: 104px;margin: 0 auto;">Ok</button>
-                            <button id="decline-notifications" style="display: none; background-color: transparent; color: white; border: 1px solid white; padding: 10px 18px; border-radius: 4px; cursor: pointer; flex: 1;">Not Now</button>
-                        </div>
-                    `;
+            promptDiv.innerHTML = `
+                <p class="notification">You'll receive notifications when Picks and Entry Form are available</p>
+                <div style="display: flex; justify-content: space-between; gap: 10px;width: 104px;margin: 0 auto;">
+                    <button id="enable-notifications" style="background-color: #478fdf; color: white; border: none; padding: 10px 18px; border-radius: 4px; font-weight: bold; cursor: pointer; flex: 1;width: 104px;margin: 0 auto;">Ok</button>
+                    <button id="decline-notifications" style="display: none; background-color: transparent; color: white; border: 1px solid white; padding: 10px 18px; border-radius: 4px; cursor: pointer; flex: 1;">Not Now</button>
+                </div>
+            `;
 
-                    document.body.appendChild(promptDiv);
+            document.body.appendChild(promptDiv);
 
 document.getElementById('enable-notifications').addEventListener('click', () => {
     promptDiv.remove();
@@ -613,24 +560,19 @@ document.getElementById('enable-notifications').addEventListener('click', () => 
         });
 });
 
+            document.getElementById('decline-notifications').addEventListener('click', () => {
+                promptDiv.remove();
+                localStorage.setItem('notificationPromptDismissed', Date.now());
+            });
+        }
 
-                    document.getElementById('decline-notifications').addEventListener('click', () => {
-                        promptDiv.remove();
-                        localStorage.setItem('notificationPromptDismissed', Date.now());
-                    });
-                }
-
-                // Save token to Firestore - UPDATED
 async function saveTokenToFirestore(token, retries = 3) {
     if (!token) {
         console.error('No token provided to saveTokenToFirestore');
         return;
     }
 
-    // Generate a device identifier
     const deviceId = localStorage.getItem('deviceId') || generateDeviceId();
-
-    // Store deviceId for future use
     localStorage.setItem('deviceId', deviceId);
 
     const browserInfo = {
@@ -643,24 +585,20 @@ async function saveTokenToFirestore(token, retries = 3) {
 
 const attemptSave = async (attempt) => {
     try {
-        // Query existing device records
         const deviceQuery = await db.collection('devices')
             .where('deviceId', '==', deviceId)
             .get();
 
         if (!deviceQuery.empty) {
-            // Device exists in database
             const deviceDoc = deviceQuery.docs[0];
             const oldData = deviceDoc.data();
 
-            // Declare updateData before using it
             let updateData = {
                 lastActive: firebase.firestore.FieldValue.serverTimestamp(),
                 userAgent: browserInfo.userAgent,
-                forceUpdate: Date.now() // Ensures Firestore registers an update
+                forceUpdate: Date.now()
             };
 
-            // Delete all existing tokens and activeTokens entries
             if (oldData.tokens) {
                 Object.keys(oldData.tokens).forEach(oldTokenKey => {
                     updateData[`tokens.${oldTokenKey}`] = firebase.firestore.FieldValue.delete();
@@ -672,24 +610,19 @@ const attemptSave = async (attempt) => {
                 });
             }
 
-            // Set the new token as the only active token
             updateData[`tokens.${browserInfo.name}`] = token;
             updateData[`activeTokens.${token}`] = true;
 
-            // Log update data to check its structure
             console.log('Updating document:', deviceDoc.id);
             console.log('Update data:', updateData);
 
-            // Update the device record
             await db.collection('devices').doc(deviceDoc.id).update(updateData);
             console.log('Device token updated successfully, old tokens deleted');
 
-            // Fetch updated document to confirm `lastActive` change
             const updatedDoc = await db.collection('devices').doc(deviceDoc.id).get({ source: 'server' });
             console.log('Updated lastActive:', updatedDoc.data().lastActive);
 
         } else {
-            // New device, create a record
             await db.collection('devices').add({
                 deviceId: deviceId,
                 platform: navigator.platform,
@@ -702,10 +635,7 @@ const attemptSave = async (attempt) => {
             console.log('New device record created successfully');
         }
 
-        // Store token in local storage
         localStorage.setItem('fcmToken', token);
-
-        // Clean up duplicate tokens in the system
         await cleanupDuplicateTokens(token, deviceId);
 
     } catch (error) {
@@ -721,26 +651,20 @@ const attemptSave = async (attempt) => {
 };
     await attemptSave(1);
 }
-              
 
-// Updated cleanupDuplicateTokens to delete tokens instead of deactivating
 async function cleanupDuplicateTokens(currentToken, deviceId) {
     try {
-        // Find all devices with this device ID
         const deviceQuery = await db.collection('devices')
             .where('deviceId', '==', deviceId)
             .get();
 
-        // Only keep the last device record, delete others
         if (deviceQuery.size > 1) {
-            // Sort by lastActive timestamp (newest first)
             const sortedDocs = deviceQuery.docs.sort((a, b) => {
                 const timeA = a.data().lastActive ? a.data().lastActive.toMillis() : 0;
                 const timeB = b.data().lastActive ? b.data().lastActive.toMillis() : 0;
                 return timeB - timeA;
             });
 
-            // Keep the first one (most recent), delete the rest
             const batch = db.batch();
             for (let i = 1; i < sortedDocs.length; i++) {
                 batch.delete(sortedDocs[i].ref);
@@ -749,7 +673,6 @@ async function cleanupDuplicateTokens(currentToken, deviceId) {
             console.log(`Cleaned up ${sortedDocs.length - 1} duplicate device records`);
         }
 
-        // Get all devices with this token
         const allDevicesWithToken = await db.collection('devices')
             .where(`activeTokens.${currentToken}`, '==', true)
             .get();
@@ -760,7 +683,6 @@ async function cleanupDuplicateTokens(currentToken, deviceId) {
 
             allDevicesWithToken.forEach(doc => {
                 const data = doc.data();
-                // Only update devices that aren't the current one
                 if (data.deviceId !== deviceId) {
                     batch.update(doc.ref, {
                         [`activeTokens.${currentToken}`]: firebase.firestore.FieldValue.delete(),
@@ -780,29 +702,25 @@ async function cleanupDuplicateTokens(currentToken, deviceId) {
     }
 }
 
-                // Generate consistent device ID - NEW
-                function generateDeviceId() {
-                    // Create a somewhat unique ID based on device characteristics
-                    const deviceData = [
-                        navigator.userAgent,
-                        navigator.language,
-                        screen.width,
-                        screen.height,
-                        new Date().getTimezoneOffset()
-                    ].join('|');
+        function generateDeviceId() {
+            const deviceData = [
+                navigator.userAgent,
+                navigator.language,
+                screen.width,
+                screen.height,
+                new Date().getTimezoneOffset()
+            ].join('|');
 
-                    // Create a hash of the device data
-                    let hash = 0;
-                    for (let i = 0; i < deviceData.length; i++) {
-                        const char = deviceData.charCodeAt(i);
-                        hash = ((hash << 5) - hash) + char;
-                        hash = hash & hash; // Convert to 32bit integer
-                    }
-                    return 'device_' + Math.abs(hash);
-                }
+            let hash = 0;
+            for (let i = 0; i < deviceData.length; i++) {
+                const char = deviceData.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return 'device_' + Math.abs(hash);
+        }
 
-                // UPDATED: Check and show notifications
-                function checkAndShowNotifications() {
+        function checkAndShowNotifications() {
     console.log('Checking notification state...');
     console.log('Current permission:', Notification.permission);
 if (isDesktop()) {
@@ -810,11 +728,9 @@ if (isDesktop()) {
         return;
     }
                   
-    // Always prompt after reset, regardless of previous state
     const wasReset = !localStorage.getItem('fcmToken') && !localStorage.getItem('notificationPromptDismissed');
 
     if (Notification.permission === 'granted' && !wasReset) {
-        // Normal flow: verify token
         const storedToken = localStorage.getItem('fcmToken');
         const storedDeviceId = localStorage.getItem('deviceId');
 
@@ -843,14 +759,12 @@ if (isDesktop()) {
                     }
                 }
             }).catch(error => {
-                // console.error('Error verifying token:', error);
                 requestPermission();
             });
         } else {
             requestPermission();
         }
     } else {
-        // Force prompt after reset or if permission is default/denied
         promptForPermission();
     }
 }
@@ -868,30 +782,25 @@ function promptForPermission() {
         const lastDismissed = localStorage.getItem('notificationPromptDismissed');
         const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 
-        // Skip timing check if recently reset
         if (!lastDismissed || (Date.now() - parseInt(lastDismissed)) > ONE_WEEK || !localStorage.getItem('fcmToken')) {
-            // Function to trigger the prompt
             const triggerPrompt = () => {
-                clearTimeout(promptTimeout); // Clear the timeout if it hasn't fired yet
-                document.removeEventListener('click', userInteracted); // Remove click listener
-                setTimeout(createNotificationPrompt, 1000); // Show prompt after 1-second delay
+                clearTimeout(promptTimeout);
+                document.removeEventListener('click', userInteracted);
+                setTimeout(createNotificationPrompt, 1000);
             };
 
-            // Set up click interaction
             const userInteracted = () => {
                 console.log('User clicked, triggering prompt early');
                 triggerPrompt();
             };
 
-            // Wait for either click or 10 seconds
             document.addEventListener('click', userInteracted, { once: true });
             const promptTimeout = setTimeout(() => {
                 console.log('10 seconds elapsed, triggering prompt');
-                document.removeEventListener('click', userInteracted); // Clean up click listener
+                document.removeEventListener('click', userInteracted);
                 triggerPrompt();
-            }, 6000); // 10 seconds
+            }, 6000);
 
-            // Initial delay of 2 seconds before starting the click/10-second logic
             setTimeout(() => {
                 console.log('Starting prompt wait period (click or 10 seconds)');
             }, 2000);
@@ -899,82 +808,80 @@ function promptForPermission() {
     }
 }
 
-                // Add styles for animations
-                const styleSheet = document.createElement("style");
-                styleSheet.textContent = `
-                    @keyframes fade-in {
-                        from { opacity: 0; }
-                        to { opacity: 1; }
-                    }
-                    @keyframes fade-out {
-                        from { opacity: 1; }
-                        to { opacity: 0; }
-                    }
-                    @keyframes slide-in {
-                        from { transform: translateX(100%); }
-                        to { transform: translateX(0); }
-                    }
-                    @keyframes slide-out {
-                        from { transform: translateX(0); }
-                        to { transform: translateX(100%); }
-                    }
-                `;
-                document.head.appendChild(styleSheet);
-
-                // Start the notification flow
-                checkAndShowNotifications();
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes fade-in {
+                from { opacity: 0; }
+                to { opacity: 1; }
             }
-        }
+            @keyframes fade-out {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+            @keyframes slide-in {
+                from { transform: translateX(100%); }
+                to { transform: translateX(0); }
+            }
+            @keyframes slide-out {
+                from { transform: translateX(0); }
+                to { transform: translateX(100%); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
 
-        function showSuccessMessage(message) {
-            const successDiv = document.createElement('div');
-            successDiv.style.cssText = `
-                position: fixed;
-                bottom: 50%;
-                left: 50%;
-                transform: translate(-50%, 50%);
-                width: fit-content;
-                min-width: 200px;
-                white-space: nowrap;
-                z-index: 1010;
-                background: rgba(0, 0, 0, 0.85);
-                color: white;
-                padding: 8px 8px;
-                border-radius: 10px;
-                box-shadow: rgba(0, 0, 0, 0.9) 0px 10px 13px;
-                text-align: center;
-                font-family: Arial, sans-serif;
-                max-width: 90%;
-                width: max-content;
-                border: 2px solid rgb(71, 143, 223);
-                animation: fade-in 0.5s ease-in-out;
-            `;
-            successDiv.textContent = message;
-            document.body.appendChild(successDiv);
-            setTimeout(() => {
-                successDiv.style.animation = 'fade-out 0.3s ease-in-out';
-                setTimeout(() => successDiv.remove(), 500);
-            }, 5000);
-        }
+        checkAndShowNotifications();
+    }
+}
 
-        // Call the function when the page is fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            const preloader = document.getElementById('preloader');
-                  // preloader.classList.add("pre-load-fade-out");
-            setTimeout(() => {
-                preloader.style.display = 'none';
-                setupFirebaseAndNotifications();
-            }, 7000);
-        });
+function showSuccessMessage(message) {
+    const successDiv = document.createElement('div');
+    successDiv.style.cssText = `
+        position: fixed;
+        bottom: 50%;
+        left: 50%;
+        transform: translate(-50%, 50%);
+        width: fit-content;
+        min-width: 200px;
+        white-space: nowrap;
+        z-index: 1010;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 8px 8px;
+        border-radius: 10px;
+        box-shadow: rgba(0, 0, 0, 0.9) 0px 10px 13px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        max-width: 90%;
+        width: max-content;
+        border: 2px solid rgb(71, 143, 223);
+        animation: fade-in 0.5s ease-in-out;
+    `;
+    successDiv.textContent = message;
+    document.body.appendChild(successDiv);
+    setTimeout(() => {
+        successDiv.style.animation = 'fade-out 0.3s ease-in-out';
+        setTimeout(() => successDiv.remove(), 500);
+    }, 5000);
+}
 
-        // PWA Install Prompt
-        let deferredPrompt;
+document.addEventListener('DOMContentLoaded', function() {
+    const preloader = document.getElementById('preloader');
+    const resetButton = document.getElementById('resetBtn');
+    // Show reset button only in standalone mode
+    if (!isStandalone()) {
+        resetButton.style.display = 'none';
+    }
+    setTimeout(() => {
+        preloader.style.display = 'none';
+        setupFirebaseAndNotifications();
+    }, 7000);
+});
+
+let deferredPrompt;
 
 function isDesktop() {
     const userAgent = navigator.userAgent.toLowerCase();
-    // Check for common desktop-specific keywords in userAgent
     const isDesktopUA = /windows nt|macintosh|linux/i.test(userAgent) && !/mobile|android|iphone|ipad|ipod/i.test(userAgent);
-    // Optionally, check screen width (e.g., > 1024px for desktop)
     const isLargeScreen = window.innerWidth > 1024;
     return isDesktopUA && isLargeScreen;
 }
@@ -983,7 +890,6 @@ function isAndroid() {
     return /Android/i.test(navigator.userAgent);
 }
 
-// Updated setupInstallPrompt function
 function setupInstallPrompt() {
     const installBanner = document.getElementById('install-banner');
     const iosInstallBanner = document.getElementById('ios-install-banner');
@@ -991,30 +897,24 @@ function setupInstallPrompt() {
     const dismissButton = document.getElementById('dismiss-button');
     const iosCloseButton = document.getElementById('ios-install-close');
 
-    // If on desktop, hide both banners and exit
     if (isDesktop()) {
         installBanner.style.display = 'none';
         iosInstallBanner.style.display = 'none';
         return;
     }
 
-    // If already installed (standalone mode), hide both banners
     if (isStandalone()) {
         installBanner.style.display = 'none';
         iosInstallBanner.style.display = 'none';
         return;
     }
 
-    // Platform-specific handling for non-desktop devices
     if (isIOS()) {
-        iosInstallBanner.style.display = 'block'; // Show iOS banner with instructions
-
-        // Close button (X): Hide the banner
+        iosInstallBanner.style.display = 'block';
         iosCloseButton.addEventListener('click', () => {
             iosInstallBanner.style.display = 'none';
         });
     } else {
-        // Android/PC: Show install banner when beforeinstallprompt fires
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -1022,7 +922,6 @@ function setupInstallPrompt() {
         });
     }
 
-    // Install button for Android/PC
     installButton.addEventListener('click', () => {
         if (deferredPrompt) {
             installBanner.style.display = 'none';
@@ -1038,13 +937,11 @@ function setupInstallPrompt() {
         }
     });
 
-    // Dismiss button for Android/PC banner
     dismissButton.addEventListener('click', () => {
         installBanner.style.display = 'none';
     });
 }
 
-// Run when page loads
 document.addEventListener('DOMContentLoaded', () => {
     setupInstallPrompt();
   gtag('event', 'app_mode', {
@@ -1054,7 +951,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Platform detection functions (unchanged)
 function isIOS() {
     return /iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
@@ -1062,42 +958,6 @@ function isIOS() {
 function isStandalone() {
     return window.matchMedia('(display-mode: standalone)').matches;
 }
-
-// function resizeIframe() {
-//     var iframe = document.querySelector("iframe");
-//     if (iframe) {
-//         // Debounce the resize to prevent excessive updates
-//         let timeout;
-//         clearTimeout(timeout);
-//         timeout = setTimeout(() => {
-//             // Use screen dimensions as fallback
-//             const height = window.innerHeight || document.documentElement.clientHeight || screen.height;
-//             const width = window.innerWidth || document.documentElement.clientWidth || screen.width;
-
-//             iframe.style.height = height + "px";
-//             iframe.style.width = width + "px";
-
-//             // Remove any potential scrollbars
-//             iframe.style.border = "none";
-//             iframe.style.margin = "0";
-//             iframe.style.padding = "0";
-//         }, 100);
-//     }
-// }
-
-// // Event listeners
-// window.addEventListener("resize", resizeIframe);
-// window.addEventListener("load", resizeIframe);
-// window.addEventListener("orientationchange", resizeIframe);
-
-// // Media query listener
-// if (window.matchMedia) {
-//     const mediaQuery = window.matchMedia("(orientation: portrait)");
-//     mediaQuery.addEventListener("change", resizeIframe);
-// }
-
-// // Initial call
-// resizeIframe();  
 
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
