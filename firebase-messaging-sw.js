@@ -31,7 +31,7 @@ self.addEventListener('notificationclick', function(event) {
     event.notification.close();
 
     // Always direct to the Pick5 page
-    const urlToOpen = 'https://6630180rem.github.io/Pick5/';
+    const urlToOpen = 'https://joespick5.github.io/';
 
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true })
