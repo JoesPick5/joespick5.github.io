@@ -153,8 +153,9 @@
       align-items: center;
       z-index: 9999;
       overflow: hidden;
-      background: linear-gradient(to top, #000 3%, rgba(0, 0, 0, 0.8) 5%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.8) 95%, #000 100%),
-        url(https://img.freepik.com/premium-photo/3d-rendering-empty-Americans-football-field-with-stadium_493806-8391.jpg?semt=ais_hybrid);
+/*       background: linear-gradient(to top, #000 3%, rgba(0, 0, 0, 0.8) 5%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.8) 95%, #000 100%),
+        url(https://img.freepik.com/premium-photo/3d-rendering-empty-Americans-football-field-with-stadium_493806-8391.jpg?semt=ais_hybrid); */
+      background: rgb(0, 0, 0, .9);
       color: white;
       padding: 0px;
       background-attachment: fixed;
@@ -175,7 +176,12 @@
     line-height: 1;
     text-align: center;
     position: relative;
-    display: flex
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 15px solid #478fdf;
+    height: 214px;
+      
 ;
     flex-direction: column;
     align-items: center;
@@ -277,6 +283,7 @@
     }
       #preloader-text{
         padding-bottom: 10%;
+                border: none;
       }
     }
     @media (orientation: portrait) {
