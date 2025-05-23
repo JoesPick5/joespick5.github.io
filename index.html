@@ -909,8 +909,8 @@ document.addEventListener('DOMContentLoaded', function() {
         resetButton.style.display = 'none';
     }
     setTimeout(() => {
-        preloader.style.opacity = '0';
-      preloader.style.transition = '2s ease-in-out';
+        preloader.style.display = 'none';
+      // preloader.style.transition = '2s ease-in-out';
         setupFirebaseAndNotifications();
     }, 7000);
 });
