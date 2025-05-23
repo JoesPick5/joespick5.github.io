@@ -225,6 +225,32 @@
   }
 }
 
+    #football {
+  width: 80px;
+  height: auto;
+  position: relative;
+  top: 30px;
+  animation: bounce-roll 2s infinite ease-in-out;
+}
+
+@keyframes bounce-roll {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-30px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(0) rotate(180deg);
+  }
+  75% {
+    transform: translateY(-15px) rotate(270deg);
+  }
+  100% {
+    transform: translateY(0) rotate(360deg);
+  }
+}
+
     @media (max-width: 1100px) {
       .notification {
         width: -webkit-fill-available;
@@ -264,6 +290,7 @@
 <body>
   <div id="preloader">
     <div id="preloader-text">PICK 5</div>
+    <img id="football" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/American_football_icon_simple.svg/1024px-American_football_icon_simple.svg.png" alt="Football" />
     <button id="resetBtn" onclick="resetNotifications()" style="
                     position: fixed;
                     bottom: 20px;
