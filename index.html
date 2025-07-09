@@ -124,7 +124,7 @@
     }
         h3 {
       margin: 0 0 10px 0;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: bold;
       display: flex;
       align-items: center;
@@ -151,15 +151,30 @@
       text-decoration: none;
       margin: 4px 2px;
     }
-
-        .install-details {
-      margin: 5px 0;
-      font-size: 15px;
+        .install-icon-header{
+      width: 27px;
+      height: 27px;
+      object-fit: contain;
+      vertical-align: unset;
+      padding: 0 5px;
+    }
+    .install-details-header{
+      margin: 2px 0;
+      font-size: 16px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
     }
-    
+
+        .install-details {
+      margin: 7px 0;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 0 0 13px;
+    }
+
     .install-icon {
       width: 22px;
       height: 22px;
@@ -376,14 +391,11 @@
 
     <div id="ios-install-banner">
     <button id="ios-install-close">✕</button>
-    <h3> <img src="Pick5Logo.png" class="install-icon">Add 'Pick 5' on Your Device. </h3>
-    <p class="install-details">To install this as an web app on your device, follow the below instructions.</p>
-    <p class="install-details">1. Tap on share icon<img src="https://raw.githubusercontent.com/BobcatPGAMajors/BobcatPGAMajors.github.io/refs/heads/main/shareIcon.png" alt="Share icon" class="install-icon"></p>
-    <p class="install-details">2. Select 'Add to Home Screen' <img src="https://raw.githubusercontent.com/BobcatPGAMajors/BobcatPGAMajors.github.io/refs/heads/main/HomeScreenpng.png" alt="HomeScreen icon" class="install-icon"></p>
-    <p class="install-details">3. Click 'Add'</p>
-    <!-- <div style="display: flex; justify-content: flex-end; margin-top: 0px;">
-        <button id="ios-install-dismiss" style="background: #ff4500;border: none;color: white; padding: 5px 12px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;border-radius: 4px;">Dismiss</button>
-    </div> -->
+    <h3> <img src="Pick5Logo.png" class="install-icon-header">Add 'Pick 5' on Your Device. </h3>
+    <p class="install-details-header">To add 'Pick 5' as an web app on your device, follow the below.</p>
+    <p class="install-details">1.) Tap on share icon.<img src="https://raw.githubusercontent.com/BobcatPGAMajors/BobcatPGAMajors.github.io/refs/heads/main/shareIcon.png" alt="Share icon" class="install-icon"></p>
+    <p class="install-details">2.) Select 'Add to Home Screen'. <img src="https://raw.githubusercontent.com/BobcatPGAMajors/BobcatPGAMajors.github.io/refs/heads/main/HomeScreenpng.png" alt="HomeScreen icon" class="install-icon"></p>
+    <p class="install-details">3.) Click 'Add'.</p>
   </div>
 
   <iframe frameborder="0" scrolling="yes" allowfullscreen="yes"
