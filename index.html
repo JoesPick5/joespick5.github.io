@@ -90,7 +90,7 @@
     }
 
     #install-banner button {
-      background-color: #478fdf;
+      background-color: #4181c9;
       border: none;
       color: white;
       padding: 8px 16px;
@@ -134,7 +134,7 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    background: #478fdf;
+    background: #4181c9;
     border: 1px solid white;
     width: 28px;
     height: 28px;
@@ -222,7 +222,7 @@
     }
 
     #preloader-text {
-    background: 50% 100% / 50% 50% no-repeat radial-gradient(ellipse at bottom, #478fdf, transparent, transparent);
+    background: 50% 100% / 50% 50% no-repeat radial-gradient(ellipse at bottom, #4181c9, transparent, transparent);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -237,7 +237,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 15px solid #478fdf;
+    border: 15px solid #4181c9;
     height: 220px;
       
 ;
@@ -276,7 +276,7 @@
 
     @keyframes glow {
       40% {
-        text-shadow: 0 0 8px #478fdf;
+        text-shadow: 0 0 8px #4181c9;
       }
     }
     @keyframes smoke-rise {
@@ -367,8 +367,8 @@
                     bottom: 20px;
                     right: 12px;
                     background-color: transparent;
-                    color: #478fdf;
-                    border: 1px solid #478fdf;
+                    color: #4181c9;
+                    border: 1px solid #4181c9;
                     padding: 7px 7px;
                     border-radius: 4px;
                     font-weight: bold;
@@ -386,7 +386,7 @@
 
 <!--   <div id="ios-install-banner"
     style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 10px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 1001; text-align: left; max-width: 90%; font-family: Arial, sans-serif;">
-    <button id="ios-install-close" style="position: absolute; top: 5px; right: 5px; background: #478fdf; border: 1px solid black; width: 24px; height: 24px; font-size: 20px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; line-height: 1; border-radius: 5px;">✕</button>
+    <button id="ios-install-close" style="position: absolute; top: 5px; right: 5px; background: #4181c9; border: 1px solid black; width: 24px; height: 24px; font-size: 20px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; line-height: 1; border-radius: 5px;">✕</button>
     <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: bold; display: flex; align-items: center;">
       <img src="https://raw.githubusercontent.com/JoesPick5/joespick5.github.io/refs/heads/main/Pick5Logo.png" alt="Pick 5 Logo" style="width: 30px; height: 30px; margin-right: 8px; vertical-align: middle;border: 1px solid white; border-radius: 8px;">Install 'Pick 5' on Your Device.
     </h3>
@@ -423,7 +423,7 @@
 async function resetNotifications() {
     const button = document.getElementById('resetBtn');
 
-    button.style.backgroundColor = '#478fdf';
+    button.style.backgroundColor = '#4181c9';
     button.style.color = 'white';
     button.textContent = 'Resetting...';
 
@@ -486,7 +486,7 @@ async function resetNotifications() {
         localStorage.removeItem('notificationPromptDismissed');
         localStorage.removeItem('notificationPermissionDenied');
 
-        button.style.backgroundColor = '#478fdf';
+        button.style.backgroundColor = '#4181c9';
         button.textContent = 'Reset Complete';
 
         if (Notification.permission === 'denied') {
@@ -646,7 +646,7 @@ if ('serviceWorker' in navigator) {
             promptDiv.innerHTML = `
                 <p class="notification">You'll receive notifications when Picks and Entry Form are available</p>
                 <div style="display: flex; justify-content: space-between; gap: 10px;width: 104px;margin: 0 auto;">
-                    <button id="enable-notifications" style="background-color: #478fdf; color: white; border: none; padding: 10px 18px; border-radius: 4px; font-weight: bold; cursor: pointer; flex: 1;width: 104px;margin: 0 auto;">Ok</button>
+                    <button id="enable-notifications" style="background-color: #4181c9; color: white; border: none; padding: 10px 18px; border-radius: 4px; font-weight: bold; cursor: pointer; flex: 1;width: 104px;margin: 0 auto;">Ok</button>
                     <button id="decline-notifications" style="display: none; background-color: transparent; color: white; border: 1px solid white; padding: 10px 18px; border-radius: 4px; cursor: pointer; flex: 1;">Not Now</button>
                 </div>
             `;
