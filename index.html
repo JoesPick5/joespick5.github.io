@@ -104,21 +104,30 @@
     }
 
     #ios-install-banner {
-      display: none;
-      position: fixed;
-      margin: 5px;
+    display: none;
+    margin: 5px;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    right: 0;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 5px;
       border: 2px solid rgb(71, 143, 223);
-      background: rgba(0, 0, 0, 0.85);
-      bottom: 1px;
-      left: 0;
-      right: 0;
-      color: white;
-      text-align: center;
-      padding: 5px;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      width: max-content;
-      margin: 0px auto;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 10px;
+    z-index: 1001;
+    text-align: left;
+    max-width: 95%;
+    font-family: Arial, sans-serif;
+    }
+        h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
     }
 
     #ios-install-banner button {
