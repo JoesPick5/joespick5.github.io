@@ -463,7 +463,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8ZSHET5RJ"></script>
+<!--     <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8ZSHET5RJ"></script> -->
   
   <script>
     let messaging;
@@ -1098,11 +1098,11 @@ function setupInstallPrompt() {
 
 document.addEventListener('DOMContentLoaded', () => {
     setupInstallPrompt();
-  gtag('event', 'app_mode', {
-        'event_category': 'User Engagement',
-        'event_label': isStandalone() ? 'Standalone App' : 'Browser',
-        'value': isStandalone() ? 1 : 0
-    });
+  // gtag('event', 'app_mode', {
+  //       'event_category': 'User Engagement',
+  //       'event_label': isStandalone() ? 'Standalone App' : 'Browser',
+  //       'value': isStandalone() ? 1 : 0
+  //   });
 });
 
 function isIOS() {
@@ -1113,11 +1113,11 @@ function isStandalone() {
     return window.matchMedia('(display-mode: standalone)').matches;
 }
 
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  // window.dataLayer = window.dataLayer || [];
+  // function gtag(){dataLayer.push(arguments);}
+  // gtag('js', new Date());
 
-  gtag('config', 'G-J8ZSHET5RJ');
+  // gtag('config', 'G-J8ZSHET5RJ');
    
   </script>
 </body>
