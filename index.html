@@ -1035,7 +1035,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Hide preloader when the iframe has fully loaded and its content is rendered.
  iframe.onload = function() {
-        console.log('Iframe has finished loading.');
+console.log('Iframe loaded, sending cachedName to iframe');
+        const cachedName = localStorage.getItem('cachedName');
+        if (cachedName) {
+            iframe.contentWindow.postMessage(
+                { type: 'loadCachedName', value: cachedName },
+                'https://script.google.com'
+            );
+        }
 
         // Add a delay (e.g., 1000ms or 1.5s) to allow the iframe content to render.
         setTimeout(() => {
@@ -1176,27 +1183,6 @@ window.addEventListener('message', (event) => {
     }
 });
 
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('Parent window origin:', window.location.origin);
-    const iframe = document.querySelector('iframe');
-    iframe.onload = function() {
-        console.log('Iframe loaded, sending cachedName to iframe');
-        const cachedName = localStorage.getItem('cachedName');
-        if (cachedName) {
-            iframe.contentWindow.postMessage(
-                { type: 'loadCachedName', value: cachedName },
-                'https://script.google.com'
-            );
-        }
-        // Existing preloader logic...
-        setTimeout(() => {
-            preloader.classList.add('preloader-fade-out');
-            setTimeout(() => {
-                preloader.style.display = 'none';
-            }, 2000);
-        }, 1500);
-    };
-});
 
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
