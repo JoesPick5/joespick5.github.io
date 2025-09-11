@@ -1159,14 +1159,20 @@ function isStandalone() {
     return window.matchMedia('(display-mode: standalone)').matches;
 }
 window.addEventListener('message', (event) => {
-    // Correctly verify the origin for security
+    console.log('Message received from iframe:', event); // Log the entire event for debugging
+    // Verify the origin for security
     if (event.origin.endsWith('script.googleusercontent.com')) {
         const data = event.data;
-        if (data && data.type === 'saveName') {
+        console.log('Message data:', data); // Log the data for debugging
+        if (data && data.type === 'saveName' && data.value) {
             // Store the name in the parent page's localStorage
             localStorage.setItem('cachedName', data.value);
             console.log('Name saved from iframe:', data.value);
+        } else {
+            console.error('Invalid message format:', data);
         }
+    } else {
+        console.error('Invalid origin:', event.origin);
     }
 });
 
