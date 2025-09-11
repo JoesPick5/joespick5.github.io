@@ -1176,6 +1176,27 @@ window.addEventListener('message', (event) => {
     }
 });
 
+    document.addEventListener('DOMContentLoaded', () => {
+    const iframe = document.querySelector('iframe');
+    iframe.onload = function() {
+        console.log('Iframe loaded, sending cachedName to iframe');
+        const cachedName = localStorage.getItem('cachedName');
+        if (cachedName) {
+            iframe.contentWindow.postMessage(
+                { type: 'loadCachedName', value: cachedName },
+                'https://script.google.com'
+            );
+        }
+        // Existing preloader logic...
+        setTimeout(() => {
+            preloader.classList.add('preloader-fade-out');
+            setTimeout(() => {
+                preloader.style.display = 'none';
+            }, 2000);
+        }, 1500);
+    };
+});
+
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
