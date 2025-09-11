@@ -1024,6 +1024,7 @@ function showSuccessMessage(message) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('Parent window origin:', window.location.origin);
     const preloader = document.getElementById('preloader');
     const iframe = document.querySelector('iframe');
     const resetButton = document.getElementById('resetBtn');
@@ -1159,13 +1160,12 @@ function isStandalone() {
     return window.matchMedia('(display-mode: standalone)').matches;
 }
 window.addEventListener('message', (event) => {
-    console.log('Message received from iframe:', event); // Log the entire event for debugging
-    // Verify the origin for security
-    if (event.origin.endsWith('script.googleusercontent.com')) {
+    console.log('Message received from iframe:', event); // Log the entire event
+    // Allow messages from Google Apps Script domains
+    if (event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com')) {
         const data = event.data;
-        console.log('Message data:', data); // Log the data for debugging
+        console.log('Message data:', data);
         if (data && data.type === 'saveName' && data.value) {
-            // Store the name in the parent page's localStorage
             localStorage.setItem('cachedName', data.value);
             console.log('Name saved from iframe:', data.value);
         } else {
@@ -1177,6 +1177,7 @@ window.addEventListener('message', (event) => {
 });
 
     document.addEventListener('DOMContentLoaded', () => {
+      console.log('Parent window origin:', window.location.origin);
     const iframe = document.querySelector('iframe');
     iframe.onload = function() {
         console.log('Iframe loaded, sending cachedName to iframe');
