@@ -1156,9 +1156,9 @@ function isIOS() {
 function isStandalone() {
     return window.matchMedia('(display-mode: standalone)').matches;
 }
-    window.addEventListener('message', (event) => {
-  // It's crucial to verify the origin for security
-  if (event.origin === 'https://script.google.com') { // The origin of your Apps Script
+window.addEventListener('message', (event) => {
+  // Correctly verify the origin for security
+  if (event.origin.endsWith('script.googleusercontent.com')) {
     const data = event.data;
     if (data && data.type === 'saveName') {
       // Store the name in the parent page's localStorage
