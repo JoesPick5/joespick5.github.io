@@ -1159,15 +1159,15 @@ function isStandalone() {
     return window.matchMedia('(display-mode: standalone)').matches;
 }
 window.addEventListener('message', (event) => {
-  // Correctly verify the origin for security
-  if (event.origin.endsWith('script.googleusercontent.com')) {
-    const data = event.data;
-    if (data && data.type === 'saveName') {
-      // Store the name in the parent page's localStorage
-      localStorage.setItem('cachedName', data.value);
-      console.log('Name saved from iframe:', data.value);
+    // Correctly verify the origin for security
+    if (event.origin.endsWith('script.googleusercontent.com')) {
+        const data = event.data;
+        if (data && data.type === 'saveName') {
+            // Store the name in the parent page's localStorage
+            localStorage.setItem('cachedName', data.value);
+            console.log('Name saved from iframe:', data.value);
+        }
     }
-  }
 });
 
   window.dataLayer = window.dataLayer || [];
