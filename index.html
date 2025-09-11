@@ -460,10 +460,13 @@
   </div>
 
 <iframe
+    id="sandboxFrame"
+    title="PICK 6"
     src="https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec"
-    frameborder="0" 
+    frameborder="0"
     scrolling="yes"
-    allow="fullscreen; clipboard-write; autoplay; camera; encrypted-media; geolocation; microphone; midi; payment; usb; accelerometer; gyroscope; magnetometer; screen-wake-lock; clipboard-read; web-share"
+    allow="accelerometer *; ambient-light-sensor *; autoplay *; camera *; clipboard-read *; clipboard-write *; encrypted-media *; fullscreen *; geolocation *; gyroscope *; magnetometer *; microphone *; midi *; payment *; picture-in-picture *; screen-wake-lock *; speaker *; sync-xhr *; usb *; web-share *; vibrate *; vr *"
+    sandbox="allow-downloads allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"
     loading="eager">
 </iframe>
 
@@ -1166,16 +1169,14 @@ function isStandalone() {
     return window.matchMedia('(display-mode: standalone)').matches;
 }
 window.addEventListener('message', (event) => {
-    console.log('Message received from iframe:', event); // Log the entire event
-    console.log('Event origin:', event.origin); // Log the exact origin
-    // Allow messages from Google Apps Script domains
-    if (event.origin === 'https://script.google.com' || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com')) {
+    console.log('Message received from iframe:', event);
+    console.log('Event origin:', event.origin);
+    if (event.origin === 'https://script.google.com' || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com')) {
         const data = event.data;
         console.log('Message data:', data);
         if (data && data.type === 'saveName' && data.value) {
             localStorage.setItem('cachedName', data.value);
             console.log('Name saved from iframe:', data.value);
-            // Send confirmation back to iframe
             event.source.postMessage(
                 { type: 'saveNameConfirmation', value: data.value },
                 event.origin
