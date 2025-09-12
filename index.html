@@ -1274,10 +1274,18 @@ window.onload = () => {
             sendMessageToIframe({ type: 'requestCachedName' });
         };
     } else {
-        console.error("Iframe with ID 'myAppsScriptIframe' not found.");
+        console.error("Iframe with ID 'myAppsScriptIframe' not found."); // <-- This is where the error originates
     }
 };
 
+// You'll also need to define sendMessageToIframe if it's not already present
+function sendMessageToIframe(message) {
+    // This is a placeholder, you need to implement this based on how your iframe is identified.
+    // const iframe = document.getElementById('yourIframeIdHere'); // Get the iframe element
+    // if (iframe && iframe.contentWindow) {
+    //     iframe.contentWindow.postMessage(message, '*'); // Or a specific origin
+    // }
+}
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
