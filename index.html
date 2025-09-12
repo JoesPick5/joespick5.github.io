@@ -1189,24 +1189,23 @@ function isStandalone() {
 //     }
 // });
 window.addEventListener('message', (event) => {
-    // IMPORTANT: Check the origin to ensure the message is from your iframe
-    // Replace 'YOUR_IFRAME_ORIGIN' with the actual URL where your script is hosted (e.g., 'https://your-github-username.github.io')
-    // if (event.origin !== 'YOUR_IFRAME_ORIGIN') {
-      if (event.origin !== 'https://script.google.com' || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com')) {
+    // Check the origin to ensure the message is from a trusted Google Apps Script URL
+    const isGoogleScript = event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com');
+
+    if (!isGoogleScript) {
         console.error('Message received from unexpected origin:', event.origin);
         return;
     }
 
     const message = event.data;
 
+    // Check if the message has the correct format and type
     if (message && message.type === 'saveEntryName' && message.value) {
         const entryName = message.value;
         console.log('Received entry name from iframe:', entryName);
 
-        // Now you can store this entryName locally on the parent page
+        // Store the name locally
         localStorage.setItem('storedEntryName', entryName);
-
-        // You can also do other things, like update the UI
     }
 });
 
