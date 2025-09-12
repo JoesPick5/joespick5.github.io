@@ -1168,27 +1168,47 @@ function isIOS() {
 function isStandalone() {
     return window.matchMedia('(display-mode: standalone)').matches;
 }
+// window.addEventListener('message', (event) => {
+//     console.log('Message received from iframe:', event);
+//     console.log('Event origin:', event.origin);
+//     if (event.origin === 'https://script.google.com' || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com')) {
+//         const data = event.data;
+//         console.log('Message data:', data);
+//         if (data && data.type === 'saveName' && data.value) {
+//             localStorage.setItem('cachedName', data.value);
+//             console.log('Name saved from iframe:', data.value);
+//             event.source.postMessage(
+//                 { type: 'saveNameConfirmation', value: data.value },
+//                 event.origin
+//             );
+//         } else {
+//             console.error('Invalid message format:', data);
+//         }
+//     } else {
+//         console.error('Invalid origin:', event.origin);
+//     }
+// });
 window.addEventListener('message', (event) => {
-    console.log('Message received from iframe:', event);
-    console.log('Event origin:', event.origin);
-    if (event.origin === 'https://script.google.com' || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com')) {
-        const data = event.data;
-        console.log('Message data:', data);
-        if (data && data.type === 'saveName' && data.value) {
-            localStorage.setItem('cachedName', data.value);
-            console.log('Name saved from iframe:', data.value);
-            event.source.postMessage(
-                { type: 'saveNameConfirmation', value: data.value },
-                event.origin
-            );
-        } else {
-            console.error('Invalid message format:', data);
-        }
-    } else {
-        console.error('Invalid origin:', event.origin);
+    // IMPORTANT: Check the origin to ensure the message is from your iframe
+    // Replace 'YOUR_IFRAME_ORIGIN' with the actual URL where your script is hosted (e.g., 'https://your-github-username.github.io')
+    // if (event.origin !== 'YOUR_IFRAME_ORIGIN') {
+      if (event.origin !== 'https://script.google.com' || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com')) {
+        console.error('Message received from unexpected origin:', event.origin);
+        return;
+    }
+
+    const message = event.data;
+
+    if (message && message.type === 'saveEntryName' && message.value) {
+        const entryName = message.value;
+        console.log('Received entry name from iframe:', entryName);
+
+        // Now you can store this entryName locally on the parent page
+        localStorage.setItem('storedEntryName', entryName);
+
+        // You can also do other things, like update the UI
     }
 });
-
 
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
