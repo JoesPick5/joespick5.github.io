@@ -1192,7 +1192,7 @@ function isStandalone() {
 
 // Function to send a message to the iframe
 function sendMessageToIframe(message) {
-    const iframe = document.getElementById('your-apps-script-iframe-id'); // <-- IMPORTANT: Get your iframe element
+    const iframe = document.getElementById('https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec'); // <-- IMPORTANT: Get your iframe element
     if (iframe && iframe.contentWindow) {
         iframe.contentWindow.postMessage(message, 'https://script.google.com'); // Target the Apps Script domain
         // Or use '*' if the above causes issues due to nested iframes, but specify the origin on receipt.
@@ -1243,7 +1243,7 @@ window.addEventListener('message', (event) => {
 window.onload = () => {
     // Or call this function directly after your iframe is set up and loaded.
     // Example: Let's assume your iframe has an ID 'myAppsScriptIframe'
-    const iframeElement = document.getElementById('myAppsScriptIframe'); // REPLACE WITH YOUR ACTUAL IFRAME ID
+    const iframeElement = document.getElementById('https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec'); // REPLACE WITH YOUR ACTUAL IFRAME ID
     if (iframeElement) {
         iframeElement.onload = () => {
             console.log("Iframe loaded. Requesting cached name.");
