@@ -1188,26 +1188,72 @@ function isStandalone() {
 //         console.error('Invalid origin:', event.origin);
 //     }
 // });
+// --- On your GitHub Page (index.html or similar) ---
+
+// Function to send a message to the iframe
+function sendMessageToIframe(message) {
+    const iframe = document.getElementById('your-apps-script-iframe-id'); // <-- IMPORTANT: Get your iframe element
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(message, 'https://script.google.com'); // Target the Apps Script domain
+        // Or use '*' if the above causes issues due to nested iframes, but specify the origin on receipt.
+        // iframe.contentWindow.postMessage(message, '*');
+    } else {
+        console.error('Iframe or its contentWindow not found.');
+    }
+}
+
 window.addEventListener('message', (event) => {
-    // Check the origin to ensure the message is from a trusted Google Apps Script URL
+    // Validate the origin of the message sender (your Apps Script iframe)
     const isGoogleScript = event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com');
 
     if (!isGoogleScript) {
-        console.error('Message received from unexpected origin:', event.origin);
+        console.error('Message received from unexpected origin on GitHub page:', event.origin);
         return;
     }
 
     const message = event.data;
 
-    // Check if the message has the correct format and type
+    // Handle saving the entry name
     if (message && message.type === 'saveEntryName' && message.value) {
         const entryName = message.value;
-        console.log('Received entry name from iframe:', entryName);
-
-        // Store the name locally
+        console.log('GitHub Page: Received entry name from iframe for saving:', entryName);
+        // Store in parent's localStorage
         localStorage.setItem('storedEntryName', entryName);
     }
+    // Handle request to load cached name
+    else if (message && message.type === 'requestCachedName') {
+        console.log('GitHub Page: Received request for cached name.');
+        const cachedName = localStorage.getItem('storedEntryName');
+        if (cachedName) {
+            console.log('GitHub Page: Sending cached name back to iframe:', cachedName);
+            // Send the cached name back to the iframe
+            sendMessageToIframe({
+                type: 'loadCachedName', // Consistent type name with iframe's listener
+                value: cachedName
+            });
+        } else {
+            console.log('GitHub Page: No cached name found in localStorage.');
+        }
+    }
 });
+
+// Optional: To ensure the iframe is ready before trying to send the cached name,
+// you might want to trigger this after the iframe has loaded or is initialized.
+// A simple way is to call it after a short delay, or listen for a 'load' event on the iframe.
+window.onload = () => {
+    // Or call this function directly after your iframe is set up and loaded.
+    // Example: Let's assume your iframe has an ID 'myAppsScriptIframe'
+    const iframeElement = document.getElementById('myAppsScriptIframe'); // REPLACE WITH YOUR ACTUAL IFRAME ID
+    if (iframeElement) {
+        iframeElement.onload = () => {
+            console.log("Iframe loaded. Requesting cached name.");
+            // Send a request to the iframe to ask for the cached name
+            sendMessageToIframe({ type: 'requestCachedName' });
+        };
+    } else {
+        console.error("Iframe with ID 'myAppsScriptIframe' not found.");
+    }
+};
 
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
