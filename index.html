@@ -1191,48 +1191,63 @@ function isStandalone() {
 // --- On your GitHub Page (index.html or similar) ---
 
 // Function to send a message to the iframe
-function sendMessageToIframe(message) {
-    const iframe = document.getElementById('https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec'); // <-- IMPORTANT: Get your iframe element
-    if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage(message, 'https://script.google.com'); // Target the Apps Script domain
-        // Or use '*' if the above causes issues due to nested iframes, but specify the origin on receipt.
-        // iframe.contentWindow.postMessage(message, '*');
-    } else {
-        console.error('Iframe or its contentWindow not found.');
+function sendNameToAppsScript(nameToSend) {
+  const scriptUrl = 'https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec'; // e.g., 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'
+
+  fetch(scriptUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      type: 'saveEntryName', // Match the type expected by your doPost function
+      name: nameToSend
+    }),
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Success:', data);
+    if (data.success) {
+      console.log("Name successfully saved by Apps Script.");
+      // Optionally, update UI or perform other actions
+    } else {
+      console.error("Error from Apps Script:", data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Error sending name to Apps Script:', error);
+  });
 }
 
 window.addEventListener('message', (event) => {
-    // Validate the origin of the message sender (your Apps Script iframe)
     const isGoogleScript = event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com');
-
     if (!isGoogleScript) {
-        console.error('Message received from unexpected origin on GitHub page:', event.origin);
+        console.error('Message received from unexpected origin:', event.origin);
         return;
     }
 
     const message = event.data;
 
-    // Handle saving the entry name
     if (message && message.type === 'saveEntryName' && message.value) {
         const entryName = message.value;
-        console.log('GitHub Page: Received entry name from iframe for saving:', entryName);
-        // Store in parent's localStorage
+        console.log('Received entry name from iframe:', entryName);
         localStorage.setItem('storedEntryName', entryName);
-    }
-    // Handle request to load cached name
-    else if (message && message.type === 'requestCachedName') {
-        console.log('GitHub Page: Received request for cached name.');
-        const cachedName = localStorage.getItem('storedEntryName');
-        if (cachedName) {
-            console.log('GitHub Page: Sending cached name back to iframe:', cachedName);
-            // Send the cached name back to the iframe
-            sendMessageToIframe({
-                type: 'loadCachedName', // Consistent type name with iframe's listener
-                value: cachedName
-            });
+
+        // Now, send a message back to the iframe to tell it the name
+        // We need a reference to the iframe window. Assuming it has an ID 'myAppsScriptIframe'
+        const iframe = document.getElementById('myAppsScriptIframe');
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage({
+                type: 'loadCachedName', // A new message type for the iframe to load data
+                value: entryName // The name to load
+            }, 'https://n-daklpbbl233jyjgz26ponyxrydd6d4plhbvaw6i-0lu-script.googleusercontent.com/'); // Target the iframe's origin
         } else {
-            console.log('GitHub Page: No cached name found in localStorage.');
+            console.error("Could not find iframe or its contentWindow to send loadCachedName message.");
         }
     }
 });
