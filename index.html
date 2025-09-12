@@ -1225,12 +1225,12 @@ function sendNameToAppsScript(nameToSend) {
 }
 
 window.addEventListener('message', (event) => {
-    // IMPORTANT: Check the origin to ensure the message is from your Apps Script iframe
-    // This will be a googleusercontent.com or script.google.com domain.
+    // IMPORTANT: Validate origin for incoming messages from the Apps Script iframe.
+    // This check ensures messages are coming from your Apps Script deployment.
     const isGoogleScript = event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com');
 
     if (!isGoogleScript) {
-        console.error('Message received from unexpected origin on GitHub page:', event.origin);
+        console.error('GitHub Page: Message received from unexpected origin:', event.origin);
         return;
     }
 
@@ -1240,52 +1240,44 @@ window.addEventListener('message', (event) => {
     if (message && message.type === 'saveEntryName' && message.value) {
         const entryName = message.value;
         console.log('GitHub Page: Received entry name from iframe:', entryName);
-        localStorage.setItem('storedEntryName', entryName); // Store on GitHub page's localStorage
+        // Store the name locally on the GitHub page's localStorage
+        localStorage.setItem('storedEntryName', entryName);
     }
     // Message to request the cached name sent FROM the iframe TO the GitHub page
     else if (message && message.type === 'requestCachedName') {
-        console.log('GitHub Page: Received request for cached name.');
+        console.log('GitHub Page: Received request for cached name from iframe.');
         const cachedName = localStorage.getItem('storedEntryName');
         if (cachedName) {
             console.log('GitHub Page: Sending cached name back to iframe:', cachedName);
-            // Send the cached name back to the iframe.
-            // The 'event.source' is the window object of the iframe that sent the message.
+            // Send the cached name back to the specific iframe that sent the request.
+            // 'event.source' refers to the window object of the sender (your iframe).
             event.source.postMessage({
                 type: 'loadCachedName', // The iframe expects this type
                 value: cachedName
-            }, event.origin); // Send back to the origin of the sender (your iframe)
+            }, event.origin); // Use the origin of the sender for security.
         } else {
             console.log('GitHub Page: No cached name found to send.');
         }
     }
 });
-    
-// Optional: To ensure the iframe is ready before trying to send the cached name,
-// you might want to trigger this after the iframe has loaded or is initialized.
-// A simple way is to call it after a short delay, or listen for a 'load' event on the iframe.
+
+// REMOVE THIS ENTIRE WINDOW.ONLOAD BLOCK:
+// It's causing the error because it's looking for an iframe with an ID
+// that doesn't exist, and the communication flow for cached names
+// is already handled by the iframe initiating the request.
+/*
 window.onload = () => {
-    // Or call this function directly after your iframe is set up and loaded.
-    // Example: Let's assume your iframe has an ID 'myAppsScriptIframe'
-    const iframeElement = document.getElementById('https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec'); // REPLACE WITH YOUR ACTUAL IFRAME ID
+    const iframeElement = document.getElementById('https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec'); // This is not a valid ID
     if (iframeElement) {
         iframeElement.onload = () => {
             console.log("Iframe loaded. Requesting cached name.");
-            // Send a request to the iframe to ask for the cached name
-            sendMessageToIframe({ type: 'requestCachedName' });
+            // sendMessageToIframe({ type: 'requestCachedName' }); // This is also unnecessary
         };
     } else {
-        console.error("Iframe with ID 'myAppsScriptIframe' not found."); // <-- This is where the error originates
+        console.error("Iframe with ID 'myAppsScriptIframe' not found."); // This is the error you're seeing
     }
 };
-
-// You'll also need to define sendMessageToIframe if it's not already present
-function sendMessageToIframe(message) {
-    // This is a placeholder, you need to implement this based on how your iframe is identified.
-    // const iframe = document.getElementById('yourIframeIdHere'); // Get the iframe element
-    // if (iframe && iframe.contentWindow) {
-    //     iframe.contentWindow.postMessage(message, '*'); // Or a specific origin
-    // }
-}
+*/
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
