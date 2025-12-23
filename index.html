@@ -601,21 +601,29 @@ function sendNameToAppsScript(nameToSend) {
 }
 
 window.addEventListener('message', (event) => {
-    // List of trusted origins
+    // Trusted origins include GitHub Pages and Google Apps Script iframe
     const trustedOrigins = [
         'https://joespick5.github.io',         // Your GitHub Pages domain
         'https://script.google.com',           // Google Apps Script domain
-        'https://script.googleusercontent.com' // Google Apps Script iframe domain
+        'https://script.googleusercontent.com' // Google Apps Script iframe general domain
     ];
 
-    if (!trustedOrigins.includes(event.origin)) {
+    // Dynamically allow origins that match common Google Apps Script iframe subdomains
+    const isSpecificGoogleFrame =
+        event.origin.startsWith('https://') &&
+        event.origin.includes('.script.googleusercontent.com');
+
+    // Validate origin (either in trustedOrigins or matches a specific Google subdomain)
+    if (!trustedOrigins.includes(event.origin) && !isSpecificGoogleFrame) {
         console.error('Message received from unexpected origin:', event.origin);
         return;
     }
 
+    console.log('Message received from trusted origin:', event.origin);
+
     const data = event.data;
 
-    // Handles request for cached names
+    // Handle request for cached names
     if (data && data.type === 'requestCachedName') {
         console.log('GitHub Page: Received request for cached name.');
         const cachedName = localStorage.getItem('storedEntryName');
@@ -630,7 +638,7 @@ window.addEventListener('message', (event) => {
         }
     }
 
-    // Handles request for cached picks and scores
+    // Handle request for cached picks and scores
     else if (data && data.type === 'loadCachedPicksAndScores') {
         console.log('GitHub Page: Received request for cached picks and scores.');
         const cachedPicks = JSON.parse(localStorage.getItem('cachedPicks')) || null;
@@ -646,7 +654,7 @@ window.addEventListener('message', (event) => {
         }
     }
 
-    // Handles saving picks and scores
+    // Handle saving picks and scores
     else if (data && data.type === 'savePicksAndScores' && data.data) {
         console.log('GitHub Page: Caching picks and scores.');
         const { picks, scores } = data.data;
