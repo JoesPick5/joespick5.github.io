@@ -477,9 +477,9 @@
     loading="eager">
 </iframe>
 
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <!-- <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script> -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8ZSHET5RJ"></script>
 
   <script>
@@ -1038,9 +1038,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const iframe = document.querySelector('iframe');
     // const resetButton = document.getElementById('resetBtn');
 
-    if (!isStandalone()) {
-        resetButton.style.display = 'none';
-    }
+    // if (!isStandalone()) {
+    //     resetButton.style.display = 'none';
+    // }
 
     // Hide preloader when the iframe has fully loaded and its content is rendered.
  iframe.onload = function() {
