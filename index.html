@@ -601,25 +601,8 @@ function sendNameToAppsScript(nameToSend) {
 }
 
 window.addEventListener('message', (event) => {
-    // Trusted origins include GitHub Pages and Google Apps Script iframe
-    const trustedOrigins = [
-        'https://joespick5.github.io',         // Your GitHub Pages domain
-        'https://script.google.com',           // Google Apps Script domain
-        'https://script.googleusercontent.com' // Google Apps Script iframe general domain
-    ];
-
-    // Dynamically allow origins that match common Google Apps Script iframe subdomains
-    const isSpecificGoogleFrame =
-        event.origin.startsWith('https://') &&
-        event.origin.includes('.script.googleusercontent.com');
-
-    // Validate origin (either in trustedOrigins or matches a specific Google subdomain)
-    if (!trustedOrigins.includes(event.origin) && !isSpecificGoogleFrame) {
-        console.error('Message received from unexpected origin:', event.origin);
-        return;
-    }
-
-    console.log('Message received from trusted origin:', event.origin);
+      const isGoogleScript = event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com');
+      if (!isGoogleScript) { return; }
 
     const data = event.data;
 
