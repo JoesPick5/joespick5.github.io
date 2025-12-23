@@ -609,38 +609,36 @@ window.addEventListener('message', (event) => {
 
     const data = event.data;
 
-    // Handle saving picks and scores by week
-    if (data && data.type === 'savePicksAndScoresByWeek' && data.week && data.data) {
+    // Handle saving picks by week
+    if (data && data.type === 'savePicksByWeek' && data.week && data.data) {
         const week = data.week;
-        const { picks, scores } = data.data;
-        console.log(`Parent: Caching picks and scores for week ${week}.`);
+        const { picks } = data.data;
+        console.log(`Parent: Caching picks for week ${week}.`);
 
         try {
-            // Store picks and scores for the specific week
+            // Store picks for the specific week
             localStorage.setItem(`cachedPicks_week_${week}`, JSON.stringify(picks));
-            localStorage.setItem(`cachedScores_week_${week}`, JSON.stringify(scores));
-            console.log(`Parent: Picks and scores cached successfully for week ${week}.`);
+            console.log(`Parent: Picks cached successfully for week ${week}.`);
         } catch (e) {
-            console.error(`Parent: Failed to cache picks and scores for week ${week}. Data may be too large.`, e);
+            console.error(`Parent: Failed to cache picks for week ${week}. Data may be too large.`, e);
         }
     }
 
-    // Handle request for cached picks and scores by week
-    else if (data && data.type === 'loadCachedPicksAndScoresByWeek' && data.week) {
+    // Handle request for cached picks by week
+    else if (data && data.type === 'loadCachedPicksByWeek' && data.week) {
         const week = data.week;
-        console.log(`Parent: Loading cached picks and scores for week ${week}.`);
+        console.log(`Parent: Loading cached picks for week ${week}.`);
 
         const cachedPicks = JSON.parse(localStorage.getItem(`cachedPicks_week_${week}`)) || null;
-        const cachedScores = JSON.parse(localStorage.getItem(`cachedScores_week_${week}`)) || null;
 
-        if (cachedPicks && cachedScores) {
-            console.log(`Parent: Sending cached picks and scores for week ${week} to iframe.`);
+        if (cachedPicks) {
+            console.log(`Parent: Sending cached picks for week ${week} to iframe.`);
             event.source.postMessage(
-                { type: 'cachedPicksAndScoresByWeek', week: week, data: { picks: cachedPicks, scores: cachedScores } },
+                { type: 'cachedPicksByWeek', week: week, data: { picks: cachedPicks } },
                 event.origin
             );
         } else {
-            console.log(`Parent: No cached picks or scores found for week ${week}.`);
+            console.log(`Parent: No cached picks found for week ${week}.`);
         }
     }
 });
