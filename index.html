@@ -1198,7 +1198,7 @@ function isStandalone() {
 
 // Function to send a message to the iframe
 function sendNameToAppsScript(nameToSend) {
-  const scriptUrl = 'https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec'; // e.g., 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'
+  const scriptUrl = 'https://script.google.com/macros/s/AKfycbxYnI-s0wBJJqTTuO_MHW2v_tvu71Bm68Qil8gChRq8U4OtV1XCgEEP-XQuCHPqzZER/exec'; 
 
   fetch(scriptUrl, {
     method: 'POST',
@@ -1301,7 +1301,7 @@ window.addEventListener('message', (event) => {
 // is already handled by the iframe initiating the request.
 /*
 window.onload = () => {
-    const iframeElement = document.getElementById('https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec'); // This is not a valid ID
+    const iframeElement = document.getElementById('https://script.google.com/macros/s/AKfycbxYnI-s0wBJJqTTuO_MHW2v_tvu71Bm68Qil8gChRq8U4OtV1XCgEEP-XQuCHPqzZER/exec'); // This is not a valid ID
     if (iframeElement) {
         iframeElement.onload = () => {
             console.log("Iframe loaded. Requesting cached name.");
