@@ -601,53 +601,46 @@ function sendNameToAppsScript(nameToSend) {
 }
 
 window.addEventListener('message', (event) => {
-      const isGoogleScript = event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com');
-      if (!isGoogleScript) { return; }
+    const isGoogleScript = event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com');
+    if (!isGoogleScript) {
+        console.warn('Message received from untrusted origin:', event.origin);
+        return;
+    }
 
     const data = event.data;
 
-    // Handle request for cached names
-    if (data && data.type === 'requestCachedName') {
-        console.log('GitHub Page: Received request for cached name.');
-        const cachedName = localStorage.getItem('storedEntryName');
-        if (cachedName) {
-            console.log('GitHub Page: Sending cached name back to iframe:', cachedName);
-            event.source.postMessage(
-                { type: 'loadCachedName', value: cachedName },
-                event.origin
-            );
-        } else {
-            console.log('No cached name found.');
-        }
-    }
-
-    // Handle request for cached picks and scores
-    else if (data && data.type === 'loadCachedPicksAndScores') {
-        console.log('GitHub Page: Received request for cached picks and scores.');
-        const cachedPicks = JSON.parse(localStorage.getItem('cachedPicks')) || null;
-        const cachedScores = JSON.parse(localStorage.getItem('cachedScores')) || null;
-        if (cachedPicks && cachedScores) {
-            console.log('GitHub Page: Sending cached picks and scores back to iframe.');
-            event.source.postMessage(
-                { type: 'cachedPicksAndScores', data: { picks: cachedPicks, scores: cachedScores } },
-                event.origin
-            );
-        } else {
-            console.log('No cached picks or scores found.');
-        }
-    }
-
-    // Handle saving picks and scores
-    else if (data && data.type === 'savePicksAndScores' && data.data) {
-        console.log('GitHub Page: Caching picks and scores.');
+    // Handle saving picks and scores by week
+    if (data && data.type === 'savePicksAndScoresByWeek' && data.week && data.data) {
+        const week = data.week;
         const { picks, scores } = data.data;
+        console.log(`Parent: Caching picks and scores for week ${week}.`);
+
         try {
-            localStorage.setItem('cachedPicks', JSON.stringify(picks));
-            localStorage.setItem('cachedScores', JSON.stringify(scores));
-            console.log('GitHub Page: Picks and scores cached successfully.');
-            event.source.postMessage({ type: 'savePicksScoresConfirmation' }, event.origin);
+            // Store picks and scores for the specific week
+            localStorage.setItem(`cachedPicks_week_${week}`, JSON.stringify(picks));
+            localStorage.setItem(`cachedScores_week_${week}`, JSON.stringify(scores));
+            console.log(`Parent: Picks and scores cached successfully for week ${week}.`);
         } catch (e) {
-            console.error('GitHub Page: Failed to cache picks and scores. Data may be too large:', e);
+            console.error(`Parent: Failed to cache picks and scores for week ${week}. Data may be too large.`, e);
+        }
+    }
+
+    // Handle request for cached picks and scores by week
+    else if (data && data.type === 'loadCachedPicksAndScoresByWeek' && data.week) {
+        const week = data.week;
+        console.log(`Parent: Loading cached picks and scores for week ${week}.`);
+
+        const cachedPicks = JSON.parse(localStorage.getItem(`cachedPicks_week_${week}`)) || null;
+        const cachedScores = JSON.parse(localStorage.getItem(`cachedScores_week_${week}`)) || null;
+
+        if (cachedPicks && cachedScores) {
+            console.log(`Parent: Sending cached picks and scores for week ${week} to iframe.`);
+            event.source.postMessage(
+                { type: 'cachedPicksAndScoresByWeek', week: week, data: { picks: cachedPicks, scores: cachedScores } },
+                event.origin
+            );
+        } else {
+            console.log(`Parent: No cached picks or scores found for week ${week}.`);
         }
     }
 });
