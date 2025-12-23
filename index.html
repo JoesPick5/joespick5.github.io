@@ -1231,68 +1231,54 @@ function sendNameToAppsScript(nameToSend) {
 }
 
 window.addEventListener('message', (event) => {
-    // IMPORTANT: Validate origin for incoming messages from the Apps Script iframe.
-    // This check ensures messages are coming from your Apps Script deployment.
-    const isGoogleScript = event.origin.endsWith('script.google.com') || event.origin.endsWith('script.googleusercontent.com');
+    const isGitHubOrigin = event.origin === 'https://joespick5.github.io'; // Replace with your GitHub Pages domain
 
-    if (!isGoogleScript) {
-        console.error('GitHub Page: Message received from unexpected origin:', event.origin);
+    if (!isGitHubOrigin) {
+        console.error('Message received from unexpected origin:', event.origin);
         return;
     }
 
-    const message = event.data;
+    const data = event.data;
 
-    // Message to save the name sent FROM the iframe TO the GitHub page
-    if (message && message.type === 'saveEntryName' && message.value) {
-        const entryName = message.value;
+    // Handles saveEntryName
+    if (data && data.type === 'saveEntryName' && data.value) {
+        const entryName = data.value;
         console.log('GitHub Page: Received entry name from iframe:', entryName);
-        // Store the name locally on the GitHub page's localStorage
         localStorage.setItem('storedEntryName', entryName);
     }
-    // Message to request the cached name sent FROM the iframe TO the GitHub page
-    else if (message && message.type === 'requestCachedName') {
-        console.log('GitHub Page: Received request for cached name from iframe.');
+
+    // Handles requestCachedName
+    else if (data && data.type === 'requestCachedName') {
+        console.log('GitHub Page: Received request for cached name.');
         const cachedName = localStorage.getItem('storedEntryName');
         if (cachedName) {
-            console.log('GitHub Page: Sending cached name back to iframe:', cachedName);
-            // Send the cached name back to the specific iframe that sent the request.
-            // 'event.source' refers to the window object of the sender (your iframe).
-            event.source.postMessage({
-                type: 'loadCachedName', // The iframe expects this type
-                value: cachedName
-            }, event.origin); // Use the origin of the sender for security.
+            event.source.postMessage(
+                { type: 'loadCachedName', value: cachedName },
+                event.origin
+            );
         } else {
-            console.log('GitHub Page: No cached name found to send.');
+            console.log('No cached name found.');
         }
     }
-});
 
-    window.addEventListener('message', (event) => {
-    const isGitHubOrigin = event.origin === 'https://joespicks.github.io'; // Replace with your GitHub Pages domain
-    if (isGitHubOrigin) {
-        const data = event.data;
+    // Handles savePicksAndScores
+    else if (data && data.type === 'savePicksAndScores' && data.data) {
+        console.log('GitHub Page: Caching picks and scores.');
+        const { picks, scores } = data.data;
+        localStorage.setItem('cachedPicks', JSON.stringify(picks));
+        localStorage.setItem('cachedScores', JSON.stringify(scores));
+        event.source.postMessage({ type: 'savePicksScoresConfirmation' }, event.origin);
+    }
 
-        if (data && data.type === 'savePicksAndScores' && data.data) {
-            // Save picks and scores to localStorage
-            const { picks, scores } = data.data;
-            localStorage.setItem('cachedPicks', JSON.stringify(picks));
-            localStorage.setItem('cachedScores', JSON.stringify(scores));
-
-            // Optionally send a confirmation back to the iframe
-            event.source.postMessage({ type: 'savePicksScoresConfirmation' }, event.origin);
-        }
-
-        if (data && data.type === 'loadCachedPicksAndScores') {
-            // Load cached picks and scores from localStorage
-            const cachedPicks = JSON.parse(localStorage.getItem('cachedPicks')) || null;
-            const cachedScores = JSON.parse(localStorage.getItem('cachedScores')) || null;
-
-            // Send cached data back to the iframe
-            event.source.postMessage({
-                type: 'cachedPicksAndScores',
-                data: { picks: cachedPicks, scores: cachedScores }
-            }, event.origin);
-        }
+    // Handles loadCachedPicksAndScores
+    else if (data && data.type === 'loadCachedPicksAndScores') {
+        console.log('GitHub Page: Loading cached picks and scores.');
+        const cachedPicks = JSON.parse(localStorage.getItem('cachedPicks')) || null;
+        const cachedScores = JSON.parse(localStorage.getItem('cachedScores')) || null;
+        event.source.postMessage(
+            { type: 'cachedPicksAndScores', data: { picks: cachedPicks, scores: cachedScores } },
+            event.origin
+        );
     }
 });
 // REMOVE THIS ENTIRE WINDOW.ONLOAD BLOCK:
