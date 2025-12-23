@@ -624,8 +624,8 @@ window.addEventListener('message', (event) => {
     // Handle request for cached picks and scores
     else if (data && data.type === 'loadCachedPicksAndScores') {
         console.log('GitHub Page: Received request for cached picks and scores.');
-        const cachedPicks = JSON.parse(localStorage.getItem('cachedPicks')) || null;
-        const cachedScores = JSON.parse(localStorage.getItem('cachedScores')) || null;
+        const cachedPicks = JSON.parse(sessionStorage.getItem('cachedPicks')) || null;
+        const cachedScores = JSON.parse(sessionStorage.getItem('cachedScores')) || null;
         if (cachedPicks && cachedScores) {
             console.log('GitHub Page: Sending cached picks and scores back to iframe.');
             event.source.postMessage(
@@ -642,8 +642,8 @@ window.addEventListener('message', (event) => {
         console.log('GitHub Page: Caching picks and scores.');
         const { picks, scores } = data.data;
         try {
-            localStorage.setItem('cachedPicks', JSON.stringify(picks));
-            localStorage.setItem('cachedScores', JSON.stringify(scores));
+            sessionStorage.setItem('cachedPicks', JSON.stringify(picks));
+            sessionStorage.setItem('cachedScores', JSON.stringify(scores));
             console.log('GitHub Page: Picks and scores cached successfully.');
             event.source.postMessage({ type: 'savePicksScoresConfirmation' }, event.origin);
         } catch (e) {
