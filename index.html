@@ -477,11 +477,6 @@
     loading="eager">
 </iframe>
 
-  <!-- <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script> -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J8ZSHET5RJ"></script>
-
   <script>
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Parent window origin:', window.location.origin);
@@ -620,18 +615,12 @@ window.addEventListener('message', (event) => {
 
     const data = event.data;
 
-    // Handles saveEntryName
-    if (data && data.type === 'saveEntryName' && data.value) {
-        const entryName = data.value;
-        console.log('GitHub Page: Received entry name from iframe:', entryName);
-        localStorage.setItem('storedEntryName', entryName);
-    }
-
-    // Handles requestCachedName
-    else if (data && data.type === 'requestCachedName') {
+    // Handles request for cached names
+    if (data && data.type === 'requestCachedName') {
         console.log('GitHub Page: Received request for cached name.');
         const cachedName = localStorage.getItem('storedEntryName');
         if (cachedName) {
+            console.log('GitHub Page: Sending cached name back to iframe:', cachedName);
             event.source.postMessage(
                 { type: 'loadCachedName', value: cachedName },
                 event.origin
@@ -641,42 +630,48 @@ window.addEventListener('message', (event) => {
         }
     }
 
-    // Handles savePicksAndScores
+    // Handles request for cached picks and scores
+    else if (data && data.type === 'loadCachedPicksAndScores') {
+        console.log('GitHub Page: Received request for cached picks and scores.');
+        const cachedPicks = JSON.parse(localStorage.getItem('cachedPicks')) || null;
+        const cachedScores = JSON.parse(localStorage.getItem('cachedScores')) || null;
+        if (cachedPicks && cachedScores) {
+            console.log('GitHub Page: Sending cached picks and scores back to iframe.');
+            event.source.postMessage(
+                { type: 'cachedPicksAndScores', data: { picks: cachedPicks, scores: cachedScores } },
+                event.origin
+            );
+        } else {
+            console.log('No cached picks or scores found.');
+        }
+    }
+
+    // Handles saving picks and scores
     else if (data && data.type === 'savePicksAndScores' && data.data) {
         console.log('GitHub Page: Caching picks and scores.');
         const { picks, scores } = data.data;
-        localStorage.setItem('cachedPicks', JSON.stringify(picks));
-        localStorage.setItem('cachedScores', JSON.stringify(scores));
-        event.source.postMessage({ type: 'savePicksScoresConfirmation' }, event.origin);
-    }
-
-    // Handles loadCachedPicksAndScores
-    else if (data && data.type === 'loadCachedPicksAndScores') {
-        console.log('GitHub Page: Loading cached picks and scores.');
-        const cachedPicks = JSON.parse(localStorage.getItem('cachedPicks')) || null;
-        const cachedScores = JSON.parse(localStorage.getItem('cachedScores')) || null;
-        event.source.postMessage(
-            { type: 'cachedPicksAndScores', data: { picks: cachedPicks, scores: cachedScores } },
-            event.origin
-        );
+        try {
+            localStorage.setItem('cachedPicks', JSON.stringify(picks));
+            localStorage.setItem('cachedScores', JSON.stringify(scores));
+            console.log('GitHub Page: Picks and scores cached successfully.');
+            event.source.postMessage({ type: 'savePicksScoresConfirmation' }, event.origin);
+        } catch (e) {
+            console.error('GitHub Page: Failed to cache picks and scores. Data may be too large:', e);
+        }
     }
 });
 window.onload = () => {
-    const iframeElement = document.getElementById('https://script.google.com/macros/s/AKfycbxYnI-s0wBJJqTTuO_MHW2v_tvu71Bm68Qil8gChRq8U4OtV1XCgEEP-XQuCHPqzZER/exec'); // This is not a valid ID
+    const iframeElement = document.getElementById('sandboxFrame'); 
     if (iframeElement) {
         iframeElement.onload = () => {
             console.log("Iframe loaded. Requesting cached name.");
-            sendMessageToIframe({ type: 'requestCachedName' }); // This is also unnecessary
+            iframeElement.contentWindow.postMessage({ type: 'requestCachedName' }, '*');
         };
     } else {
-        console.error("Iframe with ID 'myAppsScriptIframe' not found."); // This is the error you're seeing
+        console.error("Iframe with ID 'sandboxFrame' not found.");
     }
 };
 
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-J8ZSHET5RJ');
    
   </script>
 </body>
