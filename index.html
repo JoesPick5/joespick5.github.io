@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -469,7 +469,7 @@
 <iframe
     id="sandboxFrame"
     title="PICK 6"
-    src="https://script.google.com/macros/s/AKfycbxkozWmCImaB48WX3p-jcFNX1qGJsVtEUZ7nAGbH73a13z4YxZ5gMQ57SNCV2XiaDSAbA/exec"
+    src="https://script.google.com/macros/s/AKfycbzxoVZ5d6_otpf7D-um1BY-sRcExNbg8ylDjWmsoaU/dev"
     frameborder="0"
     scrolling="yes"
     allow="accelerometer *; ambient-light-sensor *; autoplay *; camera *; clipboard-read *; clipboard-write *; encrypted-media *; fullscreen *; geolocation *; gyroscope *; magnetometer *; microphone *; midi *; payment *; picture-in-picture *; screen-wake-lock *; speaker *; sync-xhr *; usb *; web-share *; vibrate *; vr *"
@@ -1268,6 +1268,34 @@ window.addEventListener('message', (event) => {
     }
 });
 
+    window.addEventListener('message', (event) => {
+    const isGitHubOrigin = event.origin === 'https://joespicks.github.io'; // Replace with your GitHub Pages domain
+    if (isGitHubOrigin) {
+        const data = event.data;
+
+        if (data && data.type === 'savePicksAndScores' && data.data) {
+            // Save picks and scores to localStorage
+            const { picks, scores } = data.data;
+            localStorage.setItem('cachedPicks', JSON.stringify(picks));
+            localStorage.setItem('cachedScores', JSON.stringify(scores));
+
+            // Optionally send a confirmation back to the iframe
+            event.source.postMessage({ type: 'savePicksScoresConfirmation' }, event.origin);
+        }
+
+        if (data && data.type === 'loadCachedPicksAndScores') {
+            // Load cached picks and scores from localStorage
+            const cachedPicks = JSON.parse(localStorage.getItem('cachedPicks')) || null;
+            const cachedScores = JSON.parse(localStorage.getItem('cachedScores')) || null;
+
+            // Send cached data back to the iframe
+            event.source.postMessage({
+                type: 'cachedPicksAndScores',
+                data: { picks: cachedPicks, scores: cachedScores }
+            }, event.origin);
+        }
+    }
+});
 // REMOVE THIS ENTIRE WINDOW.ONLOAD BLOCK:
 // It's causing the error because it's looking for an iframe with an ID
 // that doesn't exist, and the communication flow for cached names
@@ -1292,4 +1320,4 @@ window.onload = () => {
    
   </script>
 </body>
-</html> -->
+</html>
